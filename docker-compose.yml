@@ -1,0 +1,13 @@
+services:
+  openvpn-client:
+    image: jesusdf/docker-strongswan:latest
+    container_name: docker-strongswan
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - ALLOWED_SUBNETS=192.168.10.0/24
+    volumes:
+      - ./local:/config
+    restart: unless-stopped
