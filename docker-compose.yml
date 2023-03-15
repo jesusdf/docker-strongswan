@@ -6,8 +6,10 @@ services:
       - NET_ADMIN
     devices:
       - /dev/net/tun:/dev/net/tun
-    environment:
-      - ALLOWED_SUBNETS=192.168.10.0/24
     volumes:
-      - ./local:/config
+      - ./config/ipsec.conf:/etc/ipsec.conf
+      - ./config/ipsec.d:/etc/ipsec.d
+      - ./config/ipsec.secrets:/etc/ipsec.secrets
+      - ./config/strongswan.conf:/etc/strongswan.conf
+      - ./config/swanctl:/etc/swanctl
     restart: unless-stopped
