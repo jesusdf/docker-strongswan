@@ -42,4 +42,4 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: ${{ github.repository_owner }}/docker-strongswan
-          readme-filepath: ./docker-compose.yml
+          readme-filepath: ./README.md
