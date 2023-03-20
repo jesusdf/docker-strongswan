@@ -13,10 +13,15 @@ RUN apk --update add ca-certificates \
             openssl \
             strongswan \
             xl2tpd \
+            ppp \
+            openrc \
+            bash \
     && rm -rf /var/cache/apk/*
 
 EXPOSE 500/udp \
        4500/udp
 
-ENTRYPOINT ["/usr/sbin/ipsec"]
+COPY startup.sh /
+
+ENTRYPOINT ["/startup.sh"]
 CMD ["start", "--nofork"]
