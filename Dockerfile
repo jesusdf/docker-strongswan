@@ -11,9 +11,9 @@ RUN apk --update add ca-certificates \
             iproute2 \
             iptables-dev \
             openssl \
-            strongswan && \
-            xl2tpd && \
-    rm -rf /var/cache/apk/*
+            strongswan \
+            xl2tpd \
+    && rm -rf /var/cache/apk/*
 
 EXPOSE 500/udp \
        4500/udp
