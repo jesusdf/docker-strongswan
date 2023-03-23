@@ -16,7 +16,11 @@ RUN apk --update add ca-certificates \
             ppp \
             openrc \
             bash \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/cache/apk/* \
+    && rm -f  /sbin/apk \
+              /usr/bin/wget \
+              /usr/sbin/sendmail \
+              /usr/bin/nc
 
 EXPOSE 500/udp \
        4500/udp
