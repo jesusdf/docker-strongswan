@@ -1,6 +1,9 @@
 
 #!/bin/bash
 
+cp /usr/share/zoneinfo/${TZ} /etc/localtime
+echo "${TZ}" >  /etc/timezone
+
 # Using L2TP?
 if [ -f /etc/ppp/options.l2tpd.client ]; then
     /usr/sbin/ipsec &
