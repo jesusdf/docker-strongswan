@@ -6,6 +6,8 @@ services:
       - NET_ADMIN
     devices:
       - /dev/net/tun:/dev/net/tun
+    environment:
+      - TZ=Europe/Madrid
     volumes:
       - ./config/ipsec.conf:/etc/ipsec.conf
       - ./config/ipsec.d:/etc/ipsec.d

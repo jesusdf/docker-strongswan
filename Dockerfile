@@ -16,6 +16,7 @@ RUN apk --update add ca-certificates \
             ppp \
             openrc \
             bash \
+            tzdata \
     && rm -rf /var/cache/apk/* \
     && rm -f  /sbin/apk \
               /usr/bin/wget \
