@@ -1,0 +1,53 @@
+connections {
+    client-ikev1-agressive {
+        version = 1
+        aggressive = yes
+        pull = no
+        proposals = aes256-sha1-modp1024
+        rekey_time = 12h
+        encap = yes
+        dpd_delay = 30s
+        dpd_timeout = 5s
+        vips = 0.0.0.0
+
+        local {
+            auth = psk
+            id = vpn-client
+        }
+
+        local-xauth {
+            auth = xauth
+            xauth_id = your_username
+        }
+
+        remote {
+            auth = psk
+            id = 123.123.123.123
+        }
+
+        children {
+            net-to-net {
+                esp_proposals = aes256-sha256-modp1024
+                rekey_time = 12h
+                replay_window = 32
+                remote_ts = 0.0.0.0/0
+                dpd_action = restart
+                start_action = start
+                close_action = start
+            }
+        }
+    }
+}
+
+secrets {
+    ike-1 {
+        id-local  = vpn-client
+        id-remote = 123.123.123.123
+        secret = your_psk_here
+    }
+
+    xauth-1 {
+        id = your_username
+        secret = your_password_here
+    }
+}
