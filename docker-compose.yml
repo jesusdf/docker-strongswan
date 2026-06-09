@@ -9,9 +9,6 @@ services:
     environment:
       - TZ=Europe/Madrid
     volumes:
-      - ./config/ipsec.conf:/etc/ipsec.conf
-      - ./config/ipsec.d:/etc/ipsec.d
-      - ./config/ipsec.secrets:/etc/ipsec.secrets
       - ./config/strongswan.conf:/etc/strongswan.conf
       - ./config/swanctl:/etc/swanctl
     restart: unless-stopped

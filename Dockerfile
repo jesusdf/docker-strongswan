@@ -2,7 +2,7 @@
 # StrongSwan VPN + Alpine Linux
 #
 
-FROM alpine:3.17.2
+FROM alpine:3.23
 
 RUN apk --update add ca-certificates \
             curl \
@@ -12,6 +12,8 @@ RUN apk --update add ca-certificates \
             iptables-dev \
             openssl \
             strongswan \
+            strongswan-plugins-vici \
+            strongswan-swanctl \
             xl2tpd \
             ppp \
             openrc \
@@ -27,6 +29,6 @@ EXPOSE 500/udp \
        4500/udp
 
 COPY startup.sh /
+RUN chmod +x /startup.sh
 
 ENTRYPOINT ["/startup.sh"]
-CMD ["start", "--nofork"]
