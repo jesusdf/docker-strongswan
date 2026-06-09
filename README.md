@@ -95,6 +95,153 @@ sudo iptables -A FORWARD -j ACCEPT
     docker exec -it strongswan swanctl --list-conns
     docker exec -it strongswan swanctl --list-pools
 
+## Running as a VPN Client
+
+The container can connect to a remote IPsec/IKEv2 server without any code
+changes. The mechanism is straightforward: on startup, `charon` loads the
+configuration from `/etc/swanctl` via VICI. If any child SA has
+`start_action = start`, charon initiates that connection automatically.
+
+### Directory layout
+
+Mount a local folder to `/etc/swanctl` that contains at minimum:
+
+```
+config/swanctl/
+├── swanctl.conf          # connection config + credentials
+└── x509ca/
+    └── caCert.pem        # CA certificate to verify the remote server
+```
+
+**Obtaining the CA certificate**
+
+If the remote server also exposes HTTPS, the included `get-remote-ca.sh`
+script can fetch the root CA automatically:
+
+```bash
+./get-remote-ca.sh vpn.example.com
+# optionally specify a port (default: 443)
+./get-remote-ca.sh vpn.example.com 8443
+```
+
+The certificate is saved to `config/swanctl/x509ca/caCert.pem`. Verify the
+output before use — confirm that the subject matches the expected CA and that
+the validity dates are correct.
+
+If the server does not have HTTPS, request the CA certificate from its
+administrator or export it directly from the server's
+`config/swanctl/x509ca/` directory.
+
+If the remote server requires certificate authentication add:
+
+```
+config/swanctl/
+├── x509/
+│   └── clientCert.pem
+└── private/
+    └── clientKey.pem
+```
+
+### swanctl.conf example (EAP-MSCHAPv2)
+
+```
+connections {
+    myvpn {
+        version = 2
+        remote_addrs = vpn.example.com
+
+        # Request a virtual IP from the server
+        vips = 0.0.0.0
+
+        local {
+            auth = eap-mschapv2
+            id = myusername
+        }
+        remote {
+            auth = pubkey
+            id = vpn.example.com
+        }
+        children {
+            myvpn {
+                # Route all traffic through the tunnel
+                remote_ts = 0.0.0.0/0, ::/0
+
+                # Auto-connect on startup and reconnect on drop
+                start_action = start
+                close_action = start
+                dpd_action = restart
+            }
+        }
+    }
+}
+
+secrets {
+    eap-myuser {
+        id = myusername
+        secret = mypassword
+    }
+}
+```
+
+For certificate-based authentication replace the `local` block and `secrets`
+with:
+
+```
+        local {
+            auth = pubkey
+            certs = clientCert.pem
+        }
+```
+
+### docker-compose.yml
+
+The intended use is as a network stack for another container. Set
+`network_mode: service:strongswan` on the dependent container so it shares
+the strongswan network namespace — all its traffic is then routed through
+the VPN tunnel automatically.
+
+```yaml
+services:
+  strongswan:
+    image: jesusdf/docker-strongswan:latest
+    container_name: docker-strongswan
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - TZ=Europe/Madrid
+    volumes:
+      - ./config/strongswan.conf:/etc/strongswan.conf
+      - ./config/swanctl:/etc/swanctl
+    restart: unless-stopped
+
+  myapp:
+    image: myapp:latest
+    network_mode: service:strongswan
+    depends_on:
+      - strongswan
+```
+
+> `NET_ADMIN` is required for kernel IPsec (xfrm) and route management.
+> `/dev/net/tun` is required for IKEv1 and L2TP connections.
+
+### Managing the connection
+
+```bash
+# Check current tunnel state
+docker exec -it strongswan swanctl --list-sas
+
+# Initiate manually (if start_action = none)
+docker exec -it strongswan swanctl --initiate --child myvpn
+
+# Bring the tunnel down
+docker exec -it strongswan swanctl --terminate --ike myvpn
+
+# Reload config after editing swanctl.conf
+docker exec -it strongswan swanctl --load-all
+```
+
 ## Client Setup
 
 ### macOS
