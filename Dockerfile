@@ -12,8 +12,6 @@ RUN apk --update add ca-certificates \
             iptables-dev \
             openssl \
             strongswan \
-            strongswan-plugins-vici \
-            strongswan-swanctl \
             xl2tpd \
             ppp \
             openrc \
