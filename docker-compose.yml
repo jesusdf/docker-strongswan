@@ -11,4 +11,10 @@ services:
     volumes:
       - ./config/strongswan.conf:/etc/strongswan.conf
       - ./config/swanctl:/etc/swanctl
+    healthcheck:
+      test: ["CMD-SHELL", "swanctl --list-sas 2>/dev/null | grep -q INSTALLED"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     restart: unless-stopped

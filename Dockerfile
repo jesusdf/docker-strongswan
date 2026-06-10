@@ -26,6 +26,9 @@ RUN apk --update add ca-certificates \
 EXPOSE 500/udp \
        4500/udp
 
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD swanctl --stats > /dev/null 2>&1
+
 COPY startup.sh /
 RUN chmod +x /startup.sh
 
