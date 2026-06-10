@@ -5,7 +5,7 @@ echo "${TZ}" > /etc/timezone
 
 # Using L2TP?
 if [ -f /etc/ppp/options.l2tpd.client ]; then
-    /usr/sbin/charon &
+    /usr/lib/strongswan/charon &
     sleep 5
     swanctl --load-all
     swanctl --list-conns
@@ -14,5 +14,5 @@ if [ -f /etc/ppp/options.l2tpd.client ]; then
     exec /usr/sbin/xl2tpd -D
 else
     (sleep 5 && swanctl --load-all && swanctl --list-conns) &
-    exec /usr/sbin/charon
+    exec /usr/lib/strongswan/charon
 fi
