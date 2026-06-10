@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 cp /usr/share/zoneinfo/${TZ} /etc/localtime
