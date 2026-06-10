@@ -2,7 +2,7 @@
 # StrongSwan VPN + Alpine Linux
 #
 
-FROM alpine:3.23
+FROM alpine:3.24
 
 RUN apk --update add ca-certificates \
             curl \
