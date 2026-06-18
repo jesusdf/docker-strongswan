@@ -3,6 +3,8 @@
 cp /usr/share/zoneinfo/${TZ} /etc/localtime
 echo "${TZ}" > /etc/timezone
 
+touch /run/xtables.lock
+
 # Using L2TP?
 if [ -f /etc/ppp/options.l2tpd.client ]; then
     /usr/lib/strongswan/charon &
