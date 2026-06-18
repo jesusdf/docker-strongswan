@@ -10,6 +10,7 @@ RUN apk --update add ca-certificates \
             ip6tables \
             iproute2 \
             iptables-dev \
+            iptables-legacy \
             openssl \
             strongswan \
             xl2tpd \

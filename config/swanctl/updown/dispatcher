@@ -1,0 +1,12 @@
+#!/bin/bash
+
+UPDOWN_DIR="$(dirname "$0")"
+
+case $PLUTO_VERB in
+    up-client|up-client-v6)
+        exec "$UPDOWN_DIR/vpn-up"
+        ;;
+    down-client|down-client-v6)
+        exec "$UPDOWN_DIR/vpn-down"
+        ;;
+esac
