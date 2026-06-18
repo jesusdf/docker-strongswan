@@ -19,7 +19,7 @@ RUN apk --update add ca-certificates \
             bash \
             tzdata \
             sudo \
-    && echo 'ALL ALL=(root) NOPASSWD: /sbin/iptables-legacy' > /etc/sudoers.d/iptables-legacy \
+    && printf 'Defaults !requiretty\nALL ALL=(root) NOPASSWD: %s\n' "$(which iptables-legacy)" > /etc/sudoers.d/iptables-legacy \
     && chmod 0440 /etc/sudoers.d/iptables-legacy \
     && rm -rf /var/cache/apk/* \
     && rm -f  /sbin/apk \
